@@ -23,29 +23,73 @@ pragma solidity >= 0.5.0<0.9.0;
 // the value of the new function in contract D
 
 
+//SPDX-License-Identifier: GPL-3.0
+pragma solidity ^0.7.0;
+
 contract C {
     
     uint public data = 10; // state variable 
     
-    function x() external pure returns (uint) {
+    function x() private pure returns (uint) {
         uint newData = 25;
         return newData;
     }
     
-    function l() public view returns(uint) {
+    function l() internal view returns(uint) {
+        uint newData = data - 3;
+        return newData;
+    }
+    
+    function g() public view returns (uint) {
+        return l();
+    }
+    
+    
+    function y() internal view returns (uint) {
+        return data;
+    }
+     
+     
+}
+
+contract D is C{
+
+    
+    function f() public view returns (uint) {
+        return l();
+    }
+    
+}
+
+// external l() can be call outside new contract without inherit
+//SPDX-License-Identifier: GPL-3.0
+pragma solidity ^0.7.0;
+
+contract C {
+    
+    uint public data = 10; // state variable 
+    
+    function x() private pure returns (uint) {
+        uint newData = 25;
+        return newData;
+    }
+    
+    function l() external view returns(uint) {
         uint newData = data - 3;
         return newData;
     }
     
     
-    function y() public view returns (uint) {
+    function y() internal view returns (uint) {
         return data;
     }
-    
+     
+     
 }
 
 contract D {
-    C c = new C();
+
+    C c = new C(); // new contract with all funcs available from C() & D()
     
     function f() public view returns (uint) {
         return c.l();
