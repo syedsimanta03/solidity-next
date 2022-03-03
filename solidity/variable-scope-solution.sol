@@ -52,6 +52,7 @@ contract C {
      
 }
 
+// inherited from parent C
 contract D is C{
 
     
