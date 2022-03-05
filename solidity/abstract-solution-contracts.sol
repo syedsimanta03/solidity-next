@@ -49,11 +49,14 @@ Exercise:
 
 */
 
+//SPDX-License-Identifier: GPL-3.0
+pragma solidity >= 0.7.0 < 0.9.0;
+ 
 contract Calculator {
-   function getResult() public virtual view returns(uint) {}
+   function getResult() public view virtual returns(uint) {}
 }
 contract Test is Calculator {
-   function getResult() public override view returns(uint) {
+   function getResult() public pure override returns(uint) {
       uint a = 1;
       uint b = 2;
       uint result = a + b;
