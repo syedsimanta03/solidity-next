@@ -48,7 +48,7 @@ contract Auction {
     uint public highestbid; 
     bool ended;
     
-    mapping(address => uint) pendingReturns;
+    mapping(address => uint) pendingReturns; // default value 0
     
     event highestBidIncreased(address bidder, uint amount);
     event auctionEnded(address winner, uint amount);
@@ -61,9 +61,10 @@ contract Auction {
     function bid() public payable {
         
         if(block.timestamp > auctionEndTime) revert('the auction has ended!');
-        
+        // input value by user msg.value
         if(msg.value <= highestbid) revert('sorry, the bid is not high enough!');
-        
+        // calculate the user's total bid based on the current amount they've sent to the contract
+       // plus whatever has been sent with this transaction
         if(highestbid != 0) {
             pendingReturns[highestBidder] += highestbid;
         }
@@ -76,24 +77,30 @@ contract Auction {
     //widraws bids that were overbid
     
     function withdraw() public payable returns(bool) {
+        // get the amount of the bid consume in amount avaiable
         uint amount = pendingReturns[msg.sender];
+        //** because we’re still holding onto the funds from their previous bid). For example, you bid 70 ETH, and then someone else bids 80 ETH. To outbid them, you would only need to send an additional 10.000000000000000001 ETH the next time you call placeBid() (although you could certainly send more). This seems strange on the surface  **//
         if(amount > 0) {
             pendingReturns[msg.sender] = 0;
         }
         
         if(!payable(msg.sender).send(amount)) {
+        //Calling throw not necessary here, simply reset the bidAmount owing
             pendingReturns[msg.sender] = amount;
         }
+        // else
         return true;
     }
-    
+
+    // steps to end it with validations
     function auctionEnd() public {
-        
+        // 1. Conditions
         if(block.timestamp < auctionEndTime) revert('the auction has not ended yet!');
         if(ended) revert('the auction is already over!');
-        
+        // 2. Effects
          ended = true;
          emit auctionEnded(highestBidder, highestbid);
+          // 3. Interaction
          beneficiary.transfer(highestbid);
     }
 
