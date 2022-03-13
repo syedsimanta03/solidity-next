@@ -73,7 +73,8 @@ to revert that there is not enough ether provided as a throw error.
 
 contract Vendor {
     address seller;
-    
+    error InsufficientBalance(uint receiver, uint amount);
+
     modifier onlySeller() {
           require(msg.sender == seller,
           'Only the seller can sell this!');
@@ -85,7 +86,11 @@ contract Vendor {
     
     function sell(uint amount) payable public onlySeller {
         if(amount > msg.value) {
-            revert('There is not enough ether provided!');
+           // revert('There is not enough ether provided!');
+           revert InsufficientBalance({
+                requested: amount,
+                available: balances[msg.sender]
+            });
         }
     }
 }
