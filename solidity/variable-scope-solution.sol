@@ -39,16 +39,16 @@ contract C {
         uint newData = data - 3;
         return newData;
     }
-    
-    function g() public view returns (uint) {
-        return l();
-    }
-    
+   
     
     function y() internal view returns (uint) {
         return data;
     }
      
+     
+    function g() public view returns (uint) {
+        return l();
+    }
      
 }
 
